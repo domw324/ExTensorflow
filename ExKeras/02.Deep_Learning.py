@@ -40,12 +40,19 @@ model.add(Dense(units=2, input_dim=28*28, activation='relu'))
 model.add(Dense(units=10, activation='softmax'))
 
 # 3. 모델 엮기
-model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['acc'])
 
 # 4. 모델 학습시키기
+# 콜백함수를 적용하지 않은 기존 코드
+# hist = model.fit(X_train, Y_train, epochs=3000, batch_size=10, validation_data=(X_val, Y_val))
+
+# 조기종료 콜백함수 정의
 from keras.callbacks import EarlyStopping
-early_stopping = EarlyStopping() # 조기종료 콜백함수 정의
-hist = model.fit(X_train, Y_train, epochs=3000, batch_size=10, validation_data=(X_val, Y_val))
+# early_stopping = EarlyStopping()
+early_stopping = EarlyStopping(patience=20) # 20epochs 기다리는 조기종료 콜백함수
+
+hist = model.fit(X_train, Y_train, epochs=3000, batch_size=10, validation_data=(X_val, Y_val), callbacks=[early_stopping]) #
+
 
 # 5. 모델 학습 과정 표시
 import matplotlib.pyplot as plt
@@ -54,9 +61,10 @@ fig, loss_ax = plt.subplots()
 
 acc_ax = loss_ax.twinx()
 
+# loss : 훈련 손실값 / val_loss : 검증 손실값
 loss_ax.plot(hist.history['loss'], 'y', label='train loss')
 loss_ax.plot(hist.history['val_loss'], 'r', label='val loss')
-
+# acc : 훈련 정확도 / val_acc : 검증 정확도
 acc_ax.plot(hist.history['acc'], 'b', label='train acc')
 acc_ax.plot(hist.history['val_acc'], 'g', label='val acc')
 
