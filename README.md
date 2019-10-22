@@ -26,6 +26,7 @@ Tensorflow 공부해보자
 Tensorflow 2.0에서는 Keras를 사용하길 권장하는 것 같다.
 
 #### 참고사이트
+아래 사이트를 따라가며 공부합니다. 이 글의 내용은 학습용으로 필기한 것이며, 해당 내용은 아래 블로그에서 가져왔습니다.
 - 김태영의 케라스 블로그 : https://tykimos.github.io/index.html
 
 ## 딥러닝 개념잡기
@@ -207,4 +208,67 @@ plt.show()
     - **MeanIU = (A IU + B IU + ...) / N** : 각각 구한 IU의 평균값. 
     - Frequency Weighted IU : 클래스별로 픽셀 수가 다를 경우, 픽셀 수가 많은 클래스에 더 비중을 주고 싶을 때 사용
 
-### 학습 모델 보기/저장하기/불러오기
+### 딥러닝 시스템 구조
+만들고 싶은 시스템을 **목표 시스템**이라고 했을 때 **학습 segment**와 **판정 segment**으로 나누어진다.
+#### 학습 Segment
+- 학습용 센싱 Element : 학습 데이터 습득 > 센싱 데이터
+- 데이터셋 생성 Element : 센싱 데이터에서 학습에 적합한 형태로 전처리를 수행
+- 딥러닝 모델 학습 Element : 딥러닝 모델 학습
+#### 판정 Segment
+- 판정용 센싱 Element : 실무 환경에서 데이터 수집 > 센싱 데이터
+- 딥러닝 모델 판정 Element : 이미 학습된 딥러닝 모델을 이용해 센싱 데이터를 판정
+
+### 학습 모델 저장
+모델은 크게 **모델 아키텍처**와 **모델 가중치**로 구성된다.
+- 모델 아키텍처(Model Architecture) : 모델의 구성 정의. 모델이 어떤 층으로 쌓여있는가 
+- 모델 가중치(Weight) : 훈련셋으로 학습하면서 갱신 된 가중치
+#### 모델 저장
+즉, 학습 된 모델을 저장한다는 말은 '모델 아키텍처'와 '모델 가중치'를 저장한다는 말이다. 케라스에서는 **save()** 함수를 이용해 한번에 저장할 수 있다.
+```python
+from keras.models import load_model
+
+model.save('mnist_mlp_model.h5')
+``` 
+- 모델 아키텍처와 모델 가중치 따로 저장하는 법
+    - 모델 아키텍처 : model.to_json() / model.to_yaml() 함수 사용 -> .json / .yaml
+    - 모델 가중치 : model.save_weights() 함수에 파일 경로를 인자로 입력 -> .h5
+    - 따로 저장한 경우에는 구성도 따로
+    - 모델 아키텍처를 먼저 구성한 뒤 가중치를 불러와 모델에 셋팅한다.
+    ```python
+    from models import model_from_json
+    json_string = model.to_json()         # 모델 아키텍처를 json 형식으로 저장
+    model = model_from_json(json_string)  # json 파일에서 모델 아키텍처 재구성
+    
+    from models import model_from_yaml
+    yaml_string = model.to_yaml()         # 모델 아키텍처를 yaml 형식으로 저장
+    model = model_from_yaml(yaml_string)  # yaml 파일에서 모델 아키텍처 재구성
+    ```
+
+#### 모델 아키텍처 보기
+케라스에서는 모델을 객체를 생성한 이후에 **model_to_dat()** 함수를 이용하면 모델 아키텍처를 블록 형태로 가시화 할 수 있다.
+```python
+from IPython.display import SVG
+from keras.utils.vis_utils import model_to_dot
+
+%matplotlib inline
+
+SVG(model_to_dot(model, show_shapes=True).create(prog='dot', format='svg'))
+``` 
+#### 모델 불러오기
+저장한 모델은 당연히 불러와서 사용할 수 있다.
+1. 모델을 불러오는 함수를 사용하기 전, 저장한 모델 파일로부터 모델을 재형성.
+2. 실제 데이터로 모델을 사용. 주로 **predict()** 함수를 사용하지만, Sequentail 기반의 분류 모델의 경우에는 **predict_classes()** 함수를 제공한다. **predict_classes()** 는 가장 확률이 높은 클래스 인덱스를 알려준다.
+```python
+# 1. 실무에 사용할 데이터 준비
+
+# 2. 모델 불러오기 
+from keras.models import load_model
+model = load_model('mnist_mlp_model.h5')
+
+# 3. 모델 사용
+```
+#### 요약
+- 케라스를 이용해 모델의 구성 및 가중치 정보 외에도 학습 설정 및 상태를 저장할 수 있음.
+- 즉, 모델을 불러온 후 재학습을 시킬 수 있다. 이를 통해 신규 데이터셋이 계속 발생하는 경우, 빈번한 재학습 및 평가를 효과적으로 할 수 있다.
+- 일반적인 딥러닝 시스템에서는 학습 처리 시간을 단축시키기 위해 **GPU나 클러스터 장비**에서 학습이 이뤄지고, - 판정 과정은 학습된 모델 결과 파일을 이용해 **일반 PC 및 모바일, 임베디드 등**에서 이루어짐.
+- 딥러닝 모델에 대한 연구도 중요하지만, 실무에 적용하기 위해서는 목표 시스템에 대한 설계도 중요! (도메인, 사용 목적 등에 따라 운영 시나리오 및 환경이 다양하기 때문)
