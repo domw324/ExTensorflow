@@ -19,8 +19,12 @@ Tensorflow 공부해보자
 ## 4. PyCharm 설치
 - 파이참은 ~
 
+---
+
 # Tensorflow
 공부하는 방법...
+
+---
  
 # Keras
 Tensorflow 2.0에서는 Keras를 사용하길 권장하는 것 같다.
@@ -272,3 +276,75 @@ model = load_model('mnist_mlp_model.h5')
 - 즉, 모델을 불러온 후 재학습을 시킬 수 있다. 이를 통해 신규 데이터셋이 계속 발생하는 경우, 빈번한 재학습 및 평가를 효과적으로 할 수 있다.
 - 일반적인 딥러닝 시스템에서는 학습 처리 시간을 단축시키기 위해 **GPU나 클러스터 장비**에서 학습이 이뤄지고, - 판정 과정은 학습된 모델 결과 파일을 이용해 **일반 PC 및 모바일, 임베디드 등**에서 이루어짐.
 - 딥러닝 모델에 대한 연구도 중요하지만, 실무에 적용하기 위해서는 목표 시스템에 대한 설계도 중요! (도메인, 사용 목적 등에 따라 운영 시나리오 및 환경이 다양하기 때문)
+
+## 다층 퍼셉트론 - 레이어
+모델은 케라스의 핵심 데이터 구조이며, 레이어는 이 모델을 구성한다.
+
+##### 신경망이란?
+- 모델의 신경망에 사용되는 뉴런은 인간의 신경계를 모사한 것
+- 하나의 뉴런은 여러 다른 뉴런의 축삭돌기와 연결 되어 있다.
+- 연결된 시냅스의 강도에 따라 뉴런들의 영향력이 결정된다. 이런 영향력의 합이 일정 값(역치)을 초과하면 신호가 발생한다.
+- 발생한 신호는 축삭돌기를 통해 연결된 다른 뉴런에게 신호가 전달된다.
+- (참고 : http://cs231n.github.io/neural-networks-1/)
+
+### Dense Layer
+Dense Layer는 입력과 출력을 모두 연결해준다. 만약 입력 뉴런이 4개, 출력 뉴런이 8개 있다면, 총 연결선은 (4*8=)32개 이다.
+- 각 연결선에는 연결 강도를 나타내는 가중치(weight)가 있다.
+- 가중치가 높을수록 해당 입력 뉴런이 출력 뉴런에 미치는 영향이 크고, 낮을수록 미치는 영향이 적다.
+
+#### 사용
+입력 뉴런과 출력 뉴런을 모두 연결한다고 해서 **전결합층**이라고 불린다. 케라스에는 **Dense 클래스**로 구현되어 있다.
+```python
+# 사용 형태
+Dense(8, input_dim=4, init='uniform', activation='relu'))
+```
+- 첫번째 인자 : 출력 뉴런의 수 설정
+- input_dim : 입력 뉴런의 수 설정
+- init : 가중치 초기화 방법 설정
+    - uniform : 균일 분포
+    - normal : 가우시안 분포
+- activation : 활성화 함수 설정
+    - linear : 디폴트 값, 입력뉴런과 가중치로 계산된 결과값 그대로 출력
+    - relu : rectifier 함수, 은익층에 주로 사용
+    - sigmoid : 시그모이드 함수, 이진 분류 문제에서 출력층에 주로 사용
+    - softmax : 소프트맥스 함수, 다중 클래스 분류 문제에서 출력층에 주로 사용
+> Dense 레이어는 입력 뉴런의 수에 상관없이 출력 뉴런 수를 자유롭게 설정 할 수 있다는 장점이 있다. 이 때문에 출력층으로 많이 사용된다.
+>
+##### Sigmoid - 이진 분류 문제 (출력층)
+- 결과 값으로 0과 1만 출력 되면 되기 때문에 출력 뉴런은 1개
+- 입력 뉴런과 가중치를 계산한 값을 0에서 1사이로 표현하기 위해 **sigmoid** 활성화 함수 설정
+```python
+Dense(1, input_dim=3, activation='sigmoid'))
+```
+: 위 모델은 입력 신호 3개, 출력 신호 1개인 출력 레이어
+
+##### Softmax - 다중 클래스 분류 문제 (출력층)
+- 클래스 수(N)만큼 출력 뉴런이 필요하므로 출력 뉴런은 N개
+- 입력 뉴런과 가중치를 계산한 값을 확률 개념으로 표현하기 위해 **softmax** 활성화 함수 설정
+```python
+# 3개의 클래스로 분류하는 문제
+Dense(3, input_dim=4, activation='softmax'))
+```
+: 위 모델은 입력 신호 4개, 출력 신호 3개, 시냅스 강도의 개수 (4*3=)12개인 레이어
+
+##### Relu
+- Dense 레이어는 보통 출력층 이전의 은닉층으로도 많이 쓰이고, 영상이 아닌 수치자료 입력 시에 입력층으로도 많이 사용됨. 이 때 활성화 함수로 'relu'가 주로 사용됨.
+- relu 활성화 함수는 학습과정에서 **역전파** 시 좋은 성능이 나옴.
+```python
+Dense(4, input_dim=6, activation='relu'))
+```
+
+##### + Tip
+입력층이 아닐 때는 이전층의 출력 뉴런 수를 알 수 있기 때문에 'input_dim'을 정의하지 않아도 됨.
+```python
+model.add(Dense(8, input_dim=4, init='uniform', activation='relu'))
+model.add(Dense(6, init='uniform', activation='relu'))      # input_dim 정의 X
+model.add(Dense(1, init='uniform', activation='sigmoid'))   # input_dim 정의 X
+```
+구성된 레이어를 벡터 이미지 형태로 볼 수 있다.
+```python
+from IPython.display import SVG
+from keras.utils.visualize_util import model_to_dot
+
+SVG(model_to_dot(model, show_shapes=True).create(prog='dot', format='svg'))
+```
