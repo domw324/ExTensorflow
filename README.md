@@ -348,3 +348,4 @@ from keras.utils.visualize_util import model_to_dot
 
 SVG(model_to_dot(model, show_shapes=True).create(prog='dot', format='svg'))
 ```
+
