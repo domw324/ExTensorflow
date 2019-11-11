@@ -82,7 +82,7 @@ model.fit(x, y, batch_size=32, epochs=10)
 - 성능 개선의 여지가 없을 때 학습을 종료시키는 콜백함수를 호출.
 ```python
 keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=0, verbose=0, mode='auto')
-# moniter : 관찰하고자 하는 항목. 주로 val_loss, val_acc 사용
+# monitor : 관찰하고자 하는 항목. 주로 val_loss, val_acc 사용
 # min_delta : 개선되고 있다고 판단하기 위한 최소 변화량. 변화량 < min_delta이면 개선 없다고 판단
 # patience : 개선이 없어도 종료하지 않고 개선 없는 에포크를 얼마나 기다려 줄 것인가 지정.
 # verbose : 얼마나 자세하게 정보를 표시할 것인가 지정 (0, 1, 2)
