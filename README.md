@@ -87,9 +87,9 @@ keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=0, verbo
 # patience : 개선이 없어도 종료하지 않고 개선 없는 에포크를 얼마나 기다려 줄 것인가 지정.
 # verbose : 얼마나 자세하게 정보를 표시할 것인가 지정 (0, 1, 2)
 # mode : 관찰 항목에 개선이 없다고 판단하기 위한 기준
-#       ㄴauto : 관찰 항목의 이름에 따라 자동으로 지정
-#       ㄴmin : 관찰 항목의 감소가 멈추면 종료
-#       ㄴmax : 관찰 항목의 증가가 멈추면 종료
+#   - auto : 관찰 항목의 이름에 따라 자동으로 지정
+#   - min : 관찰 항목의 감소가 멈추면 종료
+#   - max : 관찰 항목의 증가가 멈추면 종료
 
 # 사용 예
 early_stopping = EarlyStopping()
@@ -254,7 +254,7 @@ model.save('mnist_mlp_model.h5')
 from IPython.display import SVG
 from keras.utils.vis_utils import model_to_dot
 
-%matplotlib inline
+%matplotlib inline # pycharm 에서는 오류 발생. plt.show()를 쓰는 것을 추천
 
 SVG(model_to_dot(model, show_shapes=True).create(prog='dot', format='svg'))
 ``` 
