@@ -466,3 +466,55 @@ MaxPooling2D(pool_size=(2, 2))
 Flatten()
 ```
 - 만약 3X3으로 출력된 이미지가 플래튼 레이어를 거쳐한다면 1X9 형태의 자료로 변환된다.
+
+## 데이터 부풀리기
+- 매우 한정적인 학습셋만을 가지고 조금 더 다양한 학습을 하고자 할 때 활용할 수 있다.
+- 기존의 데이터에 조금씩 변형을 가해 (유사하지만)새로운 데이터를 생성해낸다.
+
+##### 옵션
+- rotation_range : 지정된 각도 범위내에서 임의로 원본이미지를 회전
+    - **수치 및 단위 = ˚(도)**
+    - 정수
+    - rotation_range = 90 : 0도에서 90도 사이의 임의 각도로 회전
+- width_shift_range : 지정된 수평방향 이동 범위내에서 임의로 원본이미지 이동
+    - **수치 = 전체 넓이 대비 비율**
+    - 실수
+    - width_shift_range = 0.1 : 전체 너비가 100이라면 10이내로 좌우 이동
+- height_shift_range : 지정된 수직방향 이동 범위내에서 임의로 원본이미지 이동
+    - **수치=전체 높이 대비 비율**
+    - 실수
+    - height_shift_range = 0.1 : 전체 높이가 100이라면 10이내로 상하 이동
+- shear_range : 밀림 강도 범위내에서 원본 이미지 변형
+    - **수치 = 시계반대방향으로 밀림 강도**
+    - 단위=㎭(라디안)
+    - 실수
+    - shear_range = 0.5 : 0.5라디안 내외로 시계반대반향으로 변형
+- zoom_range : 지정된 확대/축소 범위내에서 임의로 원본이미지를 확대/축소
+    - **1-수치**부터 **1+수치**
+    - 실수
+    - zoom_range = 0.3 : 0.7~1.3배 크기 변화
+- horizontal_filp : 수평방향으로 뒤집기
+- vertical_filp : 수직방향으로 뒤집기
+
+##### 활용 예
+```python
+keras.preprocessing.image.ImageDataGenerator(
+    featurewise_center=False,
+    samplewise_center=False,
+    featurewise_std_normalization=False,
+    samplewise_std_normalization=False,
+    zca_whitening=False,
+    rotation_range=0.,
+    width_shift_range=0.,
+    height_shift_range=0.,
+    shear_range=0.,
+    zoom_range=0.,
+    channel_shift_range=0.,
+    fill_mode='nearest',
+    cval=0.,
+    horizontal_flip=False,
+    vertical_flip=False,
+    rescale=None,
+    preprocessing_function=None,
+    data_format=K.image_data_format())
+```
