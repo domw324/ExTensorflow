@@ -87,9 +87,13 @@ print("%s : %.2f%%" %(model.metrics_names[1], scores[1]*100))
 # 6. 모델 사용
 # 제너레이터에서 제공되는 샘플을 입력할 때는 predict_generator() 함수를 사용.
 # 예측 결과는 클래스별 확률 벡터로 출력된다.
-# 클래스에 해당하는 열을 알기 위해서는 제너레이터의 'callss_indices'를 출력하면 된다.
+# 클래스에 해당하는 열을 알기 위해서는 제너레이터의 'class_indices'를 출력하면 된다.
 print("-- Predict --")
 output = model.predict_generator(test_generator, steps=5)
 np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
 print(test_generator.class_indices)
 print(output)
+
+
+# 이 모델의 경우, 매우 제한적인 학습 데이터셋만을 가지고 학습하기 때문에, 그리고 검증 데이터셋도 매우 유사하기 때문에 100%라는 정확도가 나온다.
+# 하지만, 실제 현실에서는 이렇게 단순하지 않기 때문에 학습하는 데 있어 매우 많은 상황이 있을 수 있으며, 예외적인 경우도 많이 존재할 것이다.
