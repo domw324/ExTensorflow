@@ -518,3 +518,40 @@ keras.preprocessing.image.ImageDataGenerator(
     preprocessing_function=None,
     data_format=K.image_data_format())
 ```
+
+## 순환 신경망 레이어
+- 순환 신경망 모델 : **순차적인 자료**에서 **규칙적인 패턴을 인식**하거나 그 **의미를 추론**할 수 있음
+- 순차적이라는 특성 → 간단한 레이어로도 다양한 모델을 구성 가능
+- 케라스에서 제공하는 순환 신경망 레이어 : SimpleRNN, GRU, LSTM
+- Dense Layer와 비슷하지만, 시퀀스 출력 여부와 상태유지 모드 설정으로 다양한 형태의 신경망을 구성할 수 있음
+
+### LSTM (Long Short-Term Memory units)
+LSTM 레이어는 긴 시퀀스를 기억할 수 있는 순환 신경망 레이어이다.
+
+##### 입력 형태
+- 메모리 셀 개수 : 기억 용량 정도, 출력 형태 결정 (Dense 레이어의 출력 뉴런 수와 유사)
+- 입력 속성 수 : 입력 되는 속성 수
+- 입력 길이 : 시퀀스 데이터의 입력 길이 (모든 입력이 같은 가중치를 사용)
+```python
+LSTM(memory_cell_num, input_dim, input_length)
+# 첫번째 인자 : 메모리 셀 개수
+# input_dim : 입력 속성 수
+
+# 사용 예
+LSTM(3, input_dim=1)
+LSTM(3, input_dim=1, input_length=4)
+```
+##### 출력 형태
+- return_sequences : 시퀀스 출력 여부. many to many 문제를 풀거나 LSTM 레이어를 여러개 쌓아올릴 때 **return_sequences=True** 설정할 수 있음.
+```python
+return_sequences=False  # 마지막 시퀀스 이후 출력 (1회 출력)
+return_sequences=True   # 매 시퀀스 마다 출력 (input_length 만큼 출력)
+```
+
+##### 상태유지(stateful) 모드
+- stateful : 상태 유지 여부
+- **학습 샘플의 가장 마지막 상태** →(전달)→ **다음 샘플 학습**
+```python
+stateful=False  # 모든 시퀀스 입력값 = 항상 새로운 시퀀스 입력
+stateful=True   # 각 시퀀스 입력값 = 직전 시퀀스 마지막 상태 + 새로운 시퀀스 입력
+```
