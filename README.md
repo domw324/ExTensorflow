@@ -526,14 +526,14 @@ keras.preprocessing.image.ImageDataGenerator(
 - Dense Layer와 비슷하지만, 시퀀스 출력 여부와 상태유지 모드 설정으로 다양한 형태의 신경망을 구성할 수 있음
 
 ### LSTM (Long Short-Term Memory units)
-LSTM 레이어는 긴 시퀀스를 기억할 수 있는 순환 신경망 레이어이다.
+- LSTM 레이어는 긴 시퀀스를 기억할 수 있는 순환 신경망 레이어이다.
 
 ##### 입력 형태
 - 메모리 셀 개수 : 기억 용량 정도, 출력 형태 결정 (Dense 레이어의 출력 뉴런 수와 유사)
-- 입력 속성 수 : 입력 되는 속성 수
 - 입력 길이 : 시퀀스 데이터의 입력 길이 (모든 입력이 같은 가중치를 사용)
+- 입력 속성 수 : 입력 되는 속성 수
 ```python
-LSTM(memory_cell_num, input_dim, input_length)
+LSTM(memory_cell_num, input_length, input_dim)
 # 첫번째 인자 : 메모리 셀 개수
 # input_dim : 입력 속성 수
 
@@ -555,3 +555,37 @@ return_sequences=True   # 매 시퀀스 마다 출력 (input_length 만큼 출�
 stateful=False  # 모든 시퀀스 입력값 = 항상 새로운 시퀀스 입력
 stateful=True   # 각 시퀀스 입력값 = 직전 시퀀스 마지막 상태 + 새로운 시퀀스 입력
 ```
+- **이전 상태를 기억할 필요가 있는가** 고려
+
+##### 사용
+```python
+LSTM(memory_cell_num, batch_input_shape)
+```
+LSTM을 제대로 활용하기 위해서 **상태유지 모드**, **배치사이즈**, **타입스텝**, **속성**에 대한 개념 이해가 필요
+- 상태유지
+    - stateful=True (stateful=False)
+    - 현재 학습된 상태가 다음 학습 시 초기 상태로 전달
+    - 긴 시퀀스 데이터 처리 시 사용하면 좋은 학습 효과를 얻을 수 있음
+- 배치사이즈
+    - batch_input_shape = (***batch_size***, input_length, input_dimension)
+    - 상태 유지를 지속할 크기
+    - 상태 유지 모드에 따라 개념이 다름 (stateless/stateful)
+    - stateless 에서의 의미
+        - 배치사이즈 안에서만 샘플 사이의 상태 유지, 넘어가면 상태 초기화.
+        - ex) 샘플 100개, 배치사이즈 100 : 샘플 간의 상태를 고려하며 학습
+        - ex) 샘플 100개, 배치사이즈 1 : 매 샘플마다 상태 초기화
+        - 각 샘플간의 상관성에 따라 정의해야한다.
+        - ex) 사자성어 학습 모델 : 사자성어 = 각 샘플 / 한자 4개 → 타임스텝=4 / 각 샘플(사자성어)간 관련 없음 → 배치사이즈=1
+    - stateful 에서의 의미
+        - 동시에 독립적인 상태를 유지할 샘플 종류
+        - stateful 에서는 샘플 간 상태 유지 기본. 즉, 초기화가 필요할 때 초기화 함수를 호출해야함.
+        - ex) 배치사이즈=2 : 두 개의 상태 유지, (샘플 두 종류 준비해야함, 예측 시에도 두 종류 샘플 입력)
+        - ex) 두 종목 주식 학습 모델 : 종목 간에는 상관관계가 없지만 하나의 모델로 학습 → 각 종목간 별도 상태 필요 → 배치사이즈=2
+        - **모델 2 + stateful + 배치사이즈 1** / **모델 1, stateful, 배치사이즈 2** 차이 : 전자의 경우 두 모델이 서로 다른 가중치 사용 / 후자의 경우 두 모델이 가중치 공유  
+- 타임스텝
+    - batch_input_shape = (batch_size, ***input_length***, input_dimension)
+    - 하나의 샘플에 포함된 시퀀스 개수
+- 속성
+    - batch_input_shape = (batch_size, input_length, ***input_dimension***)
+    - 입력되는 속성의 개수
+    - ex) '날씨' 예측을 위해서 '기온', '습도', '기압', '풍향', '풍속' 등 다양한 속성을 입력 받는다.
