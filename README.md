@@ -591,4 +591,8 @@ LSTM을 제대로 활용하기 위해서 **상태유지 모드**, **배치사이
     - ex) '날씨' 예측을 위해서 '기온', '습도', '기압', '풍향', '풍속' 등 다양한 속성을 입력 받는다.
     
 ##### 궁금한 점
-model.add(batch_size) 와 model.fit(batch_size) 두가지에서의 배치 사이즈는 다른 건가??
+- model.add(input_batch_shape(**batch_size**)) 와 model.fit(**batch_size**) 두 가지 곳에서의 batch_size는 어떻게 다른 건가??
+    - _TODO_
+- stateful-LSTM에서 batch_size 가 샘플 간 상태 유지할 샘플 종류를 나타낸다면, model.add(input_batch_shape(input_dimension=2))로 설정해 놓고 model.fit(batch_size=1)로 설정하는 이유는 왜일까?
+    - input_batch_shape() 내에서의 속성 개수는 샘플 하나당 고려할 속성 개수이다. 예를 들어 '나비야' 음악 악보를 보는 방법으로 '음계'와 '음길이' 두가지 속성을 보는 경우 
+    - fit() 내에서의 batch_size는 아예 다른 샘플 종류를 학습하는 것이다. 예를 들어 '나비야' 악보와 '학교종' 악보를 둘다 학습하는 것이다. (이 때, batch_size=1 : 두 악보 학습에 같은 가중치 공유 / batch_size=2 : 두 악보는 서로 다른 가중치 사용) 
