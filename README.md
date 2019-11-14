@@ -589,3 +589,6 @@ LSTM을 제대로 활용하기 위해서 **상태유지 모드**, **배치사이
     - batch_input_shape = (batch_size, input_length, ***input_dimension***)
     - 입력되는 속성의 개수
     - ex) '날씨' 예측을 위해서 '기온', '습도', '기압', '풍향', '풍속' 등 다양한 속성을 입력 받는다.
+    
+##### 궁금한 점
+model.add(batch_size) 와 model.fit(batch_size) 두가지에서의 배치 사이즈는 다른 건가??
