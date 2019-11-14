@@ -64,7 +64,7 @@ print("one hot encoding vector size is ", one_hot_vec_size)
 
 # 3. 모델 구성
 model = Sequential()
-model.add(LSTM(128, input_shape=(4, 1))) # 메모리셀=128, (타임스텝=1, 속성=1)
+model.add(LSTM(128, input_shape=(4, 1))) # 메모리셀=128, (타임스텝=4, 속성=1)
 model.add(Dense(one_hot_vec_size, activation='softmax'))
 
 # 4. 모델 학습과정 설정
@@ -72,12 +72,7 @@ model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accur
 
 # 5. 모델 학습
 history = CLossHistory() # 손실 이력 객체 생성
-
-num_epochs = 2000
-for epoch_idx in range(num_epochs):
-    print('epochs : ' + str(epoch_idx))
-    model.fit(x_train, y_train, batch_size=1, verbose=2, shuffle=False, callbacks=[history]) # 50 is X.shape[0]
-    model.reset_states()
+model.fit(x_train, y_train, epochs=2000, batch_size=1, verbose=2, callbacks=[history]) # stateless, batch_size=1 : 매 샘플마다 상태가 초기화 된 채로 학습
 
 # 6. 학습 과정 표현
 import matplotlib.pyplot as plt
@@ -91,7 +86,6 @@ plt.show()
 # 7. 모델 평가
 scores = model.evaluate(x_train, y_train)
 print("%s : %.2f%%" %(model.metrics_names[1], scores[1]*100))
-model.reset_states()
 
 # - - - - 학습 완료 - - - -
 
