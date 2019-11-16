@@ -17,6 +17,47 @@ Tensorflow 공부해보자
 ## 3. Keras 설치
 - 케라스는 ~
 
+### 필수 라이브러리 설치
+#### graphviz
+케라스 모델의 각 계층 사이의 연결과 입출력을 그래프로 보여준다.
+
+##### 설치
+1. GraphViz 홈페이지([https://graphviz.gitlab.io/](https://graphviz.gitlab.io/_pages/Download/Download_windows.html))에 들어간다.
+2. graphviz-2.39.msi를 다운로드 한다.
+3. **제어판 > 시스템 및 보안 > 시스템 > 고급 시스템 설정 > 환경 변수**로 들어간다.
+4. \[시스템 변수\]에 변수이름 : **GRAPHVIZ_DOT** / 변수 값 : **"C:\Program Files (x86)\Graphviz2.38\bin\dot.exe"** 추가
+5. \[시스템 변수\] 중 Path **편집 > 새로 만들기**을 누르고, 변수 값 : **"C:\Program Files (x86)\Graphviz2.38\bin"** 추가
+
+##### 사용
+```python
+from keras.utils import plot_model
+
+plot_model(model_name, to_file=export_image_name, show_shapes=True/False)
+
+# 사용 예
+plot_model(model, to_file='mlp-mnist.png', show_shapes=True)
+```
+
+##### 결과
+![plot_model](./KerasBook/mlt-mnist.png)
+
+##### 오류
+GraphViz를 설치했음에도 다음과 같은 오류가 뜨는 경우가 있다.
+> - ImportError: Failed to import 'pydot'. ~
+> - GraphViz’s executables not found. ~
+> - Failed to import pydot. You must install pydot and graphviz for pydotprint to work. ~
+
+이런 경우에는 두 가지를 확인하자.
+- 시스템 변수를 제대로 설정하지 못한 경우
+    - 실제 설치 된 경로를 확인하고, 시스템 변수 경로를 다시 수정하자.
+- conda에 설치를 하지 않은 경우
+    - ```bash
+      $ conda install dydot-ng
+      $ conda install graphviz
+      ```
+    - 위 코드를 입력해서 설치하자.
+    
+
 ## 4. PyCharm 설치
 - Python 작성 툴은 굉장히 많다. 이 중 Visual Code와 함께 PyCharm은 Python Code 작성의 대표적인 툴이다.
 - 만약 자신이 별다른 기능을 사용하지 않을 것 같다고 하면 Visual Code를 사용해도 좋다.

@@ -45,7 +45,7 @@ model.add(Dropout(dropout))
 model.add(Dense(num_labels))
 model.add(Activation('softmax'))
 model.summary()
-plot_model(model, to_file='mlt-mnist.png', show_shapes=True) # plot_model 에서 오류 발생
+plot_model(model, to_file='mlt-mnist.png', show_shapes=True)
 
 # 4. 모델 학습 방법 정의 (one-hot vector 손실 함수, adam 최적화 사용, 분류 작업의 지표로 정확도(accuracy) 사용)
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -55,4 +55,4 @@ model.fit(x_train, y_train, epochs=20, batch_size=batch_size)
 
 # 6. 모델 검증 (일반화가 제대로 됐는지 확인하기 위해 테스트 데이터세트로 검증)
 loss, acc = model.evaluate(x_test, y_test, batch_size=batch_size)
-print("\nTest accuracy : $.1f%%" %(100.0 * acc))
+print("\nTest accuracy : %.1f%%" %(100.0 * acc))
