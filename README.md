@@ -18,7 +18,7 @@ Tensorflow 공부해보자
 - 케라스는 ~
 
 ### 필수 라이브러리 설치
-#### graphviz
+#### pydot (GraphViz)
 케라스 모델의 각 계층 사이의 연결과 입출력을 그래프로 보여준다.
 
 ##### 설치
@@ -33,6 +33,7 @@ Tensorflow 공부해보자
 from keras.utils import plot_model
 
 plot_model(model_name, to_file=export_image_name, show_shapes=True/False)
+# show_shapes=Flase : 각 계층의 명칭과 속성만 표시 / True : 입력값 출력값 정보도 함께 표시 
 
 # 사용 예
 plot_model(model, to_file='mlp-mnist.png', show_shapes=True)
