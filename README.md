@@ -22,11 +22,12 @@ Tensorflow 공부해보자
 케라스 모델의 각 계층 사이의 연결과 입출력을 그래프로 보여준다.
 
 ##### 설치
-1. GraphViz 홈페이지([https://graphviz.gitlab.io/](https://graphviz.gitlab.io/_pages/Download/Download_windows.html))에 들어간다.
+1. [GraphViz](https://graphviz.gitlab.io/_pages/Download/Download_windows.html) 홈페이지에 들어간다.
 2. graphviz-2.39.msi를 다운로드 한다.
 3. **제어판 > 시스템 및 보안 > 시스템 > 고급 시스템 설정 > 환경 변수**로 들어간다.
 4. \[시스템 변수\]에 변수이름 : **GRAPHVIZ_DOT** / 변수 값 : **"C:\Program Files (x86)\Graphviz2.38\bin\dot.exe"** 추가
 5. \[시스템 변수\] 중 Path **편집 > 새로 만들기**을 누르고, 변수 값 : **"C:\Program Files (x86)\Graphviz2.38\bin"** 추가
+6. python에 라이브러리 설치 : ```$ pip install graphviz```
 
 ##### 사용
 ```python
@@ -388,7 +389,14 @@ Dense(8, input_dim=4, init='uniform', activation='relu'))
     - sigmoid : 시그모이드 함수, 이진 분류 문제에서 출력층에 주로 사용
     - softmax : 소프트맥스 함수, 다중 클래스 분류 문제에서 출력층에 주로 사용
 > Dense 레이어는 입력 뉴런의 수에 상관없이 출력 뉴런 수를 자유롭게 설정 할 수 있다는 장점이 있다. 이 때문에 출력층으로 많이 사용된다.
+
+> Q. **출력 뉴런수(Hidden Units)**의 수는 몇개가 적당할까? 
 >
+> A. (128, 256, 512, 1024 중) **256**개가 가장 성능이 좋다. 128 units : 신경망 빠르게 수렴, 정확도 낮음. 512/1024 units : 테스트 정확도 크게 증가 X
+##### Units
+- Units의 개수는 초매개변수(hperparameter)이다. 
+- 이 값은 신경망의 용량(capacity)을 제어, 용량은 신경망이 근사할 수 있는 함수의 복잡도를 나타내는 지표이다. (ex. 다항식의 차수) 
+
 ##### Sigmoid - 이진 분류 문제 (출력층)
 - 결과 값으로 0과 1만 출력 되면 되기 때문에 출력 뉴런은 1개
 - 입력 뉴런과 가중치를 계산한 값을 0에서 1사이로 표현하기 위해 **sigmoid** 활성화 함수 설정
