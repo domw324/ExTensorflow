@@ -55,4 +55,4 @@ model.fit(x_train, y_train, epochs=20, batch_size=batch_size)
 
 # 6. 모델 검증 (일반화가 제대로 됐는지 확인하기 위해 테스트 데이터세트로 검증)
 loss, acc = model.evaluate(x_test, y_test, batch_size=batch_size)
-print("\nTest accuracy : %.1f%%" %(100.0 * acc))
+print("\nTest accuracy : %.1f%%" % (100.0 * acc))
