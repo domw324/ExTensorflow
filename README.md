@@ -22,11 +22,12 @@ Tensorflow 공부해보자
 케라스 모델의 각 계층 사이의 연결과 입출력을 그래프로 보여준다.
 
 ##### 설치
-1. GraphViz 홈페이지([https://graphviz.gitlab.io/](https://graphviz.gitlab.io/_pages/Download/Download_windows.html))에 들어간다.
+1. [GraphViz](https://graphviz.gitlab.io/_pages/Download/Download_windows.html) 홈페이지에 들어간다.
 2. graphviz-2.39.msi를 다운로드 한다.
 3. **제어판 > 시스템 및 보안 > 시스템 > 고급 시스템 설정 > 환경 변수**로 들어간다.
 4. \[시스템 변수\]에 변수이름 : **GRAPHVIZ_DOT** / 변수 값 : **"C:\Program Files (x86)\Graphviz2.38\bin\dot.exe"** 추가
 5. \[시스템 변수\] 중 Path **편집 > 새로 만들기**을 누르고, 변수 값 : **"C:\Program Files (x86)\Graphviz2.38\bin"** 추가
+6. python에 라이브러리 설치 : ```$ pip install graphviz```
 
 ##### 사용
 ```python
@@ -384,12 +385,46 @@ Dense(8, input_dim=4, init='uniform', activation='relu'))
     - normal : 가우시안 분포
 - activation : 활성화 함수 설정
     - linear : 디폴트 값, 입력뉴런과 가중치로 계산된 결과값 그대로 출력
-    - relu : rectifier 함수, 은익층에 주로 사용
+    - relu : rectifier 함수, 은닉층에 주로 사용
     - sigmoid : 시그모이드 함수, 이진 분류 문제에서 출력층에 주로 사용
     - softmax : 소프트맥스 함수, 다중 클래스 분류 문제에서 출력층에 주로 사용
 > Dense 레이어는 입력 뉴런의 수에 상관없이 출력 뉴런 수를 자유롭게 설정 할 수 있다는 장점이 있다. 이 때문에 출력층으로 많이 사용된다.
+
+> Q. **출력 뉴런수(Hidden Units)**의 수는 몇개가 적당할까? 
 >
+> A. (128, 256, 512, 1024 중) **256**개가 가장 성능이 좋다. 128 units : 신경망 빠르게 수렴, 정확도 낮음. 512/1024 units : 테스트 정확도 크게 증가 X
+##### Units
+- Units의 개수는 초매개변수(hperparameter)이다. 
+- 이 값은 신경망의 용량(capacity)을 제어, 용량은 신경망이 근사할 수 있는 함수의 복잡도를 나타내는 지표이다. (ex. 다항식의 차수) 
+
+##### 일반적 비선형 활성화 함수
+- Relu(정류 선형 유닉, Rectified Linear Unit)
+    - 양수 입력 값은 변경 없이 통과시키고 나머지는 전부 0으로 고정시키는 필터(활성화 함수) (**relu(x) = max(0, x)**)
+    - 계산이 단순 → 효율적
+    - 주로 Dense 레이어의 은닉층에서 사용.
+    - Dense 계층은 선형 작업이기 때문에 선형 함수로만 근사할 수 있다. 일부 비선형 절차를 가지는 모델의 Dense 계층 사이에 relu 활성화 함수를 삽입하면 비선형 매핑을 모델링 할 수 있다.
+- SoftPlus
+    - softplus(x) = log(1 + e^x)
+- Elu
+    - elu(x, a) = x (if x>=0) or a(e^x-1) (otherwise)
+- Selu
+    - selu(x) = k * elu(x, a) (k = 1.0507009873554804934193349852946, a = 1.6732632423543772848170429916717)
+
+##### Softmax - 다중 클래스 분류 문제 (출력층)
+- 예측을 정규화하여 출력을 확률로 표현하는 함수.
+- softmax(xi) = (e^(xi))/(sigma(e^(xi)))
+- 입력 뉴런과 가중치를 계산한 값을 확률 개념으로 표현하기 위해 **softmax** 활성화 함수 설정
+- 전체 출력 확률의 합 = 1.0
+- 클래스 수(N)만큼 출력 뉴런이 필요하므로 출력 뉴런은 N개
+```python
+# 3개의 클래스로 분류하는 문제
+Dense(3, input_dim=4, activation='softmax'))
+```
+: 위 모델은 입력 신호 4개, 출력 신호 3개, 시냅스 강도의 개수 (4*3=)12개인 레이어
+
 ##### Sigmoid - 이진 분류 문제 (출력층)
+- 예측 텐서의 요소를 독립적으로 0.0~1.0 사이에 매핑하는 함수
+- sigmoid(x) = σ(x) = 1 / (1 + e^(-x))
 - 결과 값으로 0과 1만 출력 되면 되기 때문에 출력 뉴런은 1개
 - 입력 뉴런과 가중치를 계산한 값을 0에서 1사이로 표현하기 위해 **sigmoid** 활성화 함수 설정
 ```python
@@ -397,14 +432,10 @@ Dense(1, input_dim=3, activation='sigmoid'))
 ```
 : 위 모델은 입력 신호 3개, 출력 신호 1개인 출력 레이어
 
-##### Softmax - 다중 클래스 분류 문제 (출력층)
-- 클래스 수(N)만큼 출력 뉴런이 필요하므로 출력 뉴런은 N개
-- 입력 뉴런과 가중치를 계산한 값을 확률 개념으로 표현하기 위해 **softmax** 활성화 함수 설정
-```python
-# 3개의 클래스로 분류하는 문제
-Dense(3, input_dim=4, activation='softmax'))
-```
-: 위 모델은 입력 신호 4개, 출력 신호 3개, 시냅스 강도의 개수 (4*3=)12개인 레이어
+##### Tanh
+- 텐서의 입력값을 -1.0~1.0 범위에 매핑해주는 함수.
+- 순환 신경망(RNN)의 내부 계층에 많이 사용. (출력 계층 확성화로 사용되기도 함)
+- 출력 활성화 함수에서 sigmoid 대신에 쓰이게 되면 (출력 값의 범위가 다르므로)사용된 데이터의 척도를 적절히 변경해야 한다.
 
 ##### Relu
 - Dense 레이어는 보통 출력층 이전의 은닉층으로도 많이 쓰이고, 영상이 아닌 수치자료 입력 시에 입력층으로도 많이 사용됨. 이 때 활성화 함수로 'relu'가 주로 사용됨.
@@ -412,6 +443,17 @@ Dense(3, input_dim=4, activation='softmax'))
 ```python
 Dense(4, input_dim=6, activation='relu'))
 ```
+
+##### 손실 함수
+모델을 학습 시킬 때 기준이 된다.
+- categorical_crosesentropy
+    - softmax 활성화 계층에 사용하면 좋음
+- mean_squared_error
+    - softmax 활성화 계층에 사용하면 좋음
+    - tanh 출력에 적용하면 좋음
+- mean_absolute_error
+- binary_crossentropy
+    - 일반적으로 sigmoid 활성화 계층 다음에 사용
 
 ##### + Tip
 입력층이 아닐 때는 이전층의 출력 뉴런 수를 알 수 있기 때문에 'input_dim'을 정의하지 않아도 됨.
