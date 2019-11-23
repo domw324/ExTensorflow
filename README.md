@@ -606,6 +606,7 @@ keras.preprocessing.image.ImageDataGenerator(
 
 ### LSTM (Long Short-Term Memory units)
 - LSTM 레이어는 긴 시퀀스를 기억할 수 있는 순환 신경망 레이어이다.
+- 내부 구조에 대해 자세히 알고 싶다면 - http://colah.github.io/posts/2015-08-Understanding-LSTMs - 참조
 
 ##### 입력 형태
 - 메모리 셀 개수 : 기억 용량 정도, 출력 형태 결정 (Dense 레이어의 출력 뉴런 수와 유사)
