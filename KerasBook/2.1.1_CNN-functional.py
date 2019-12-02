@@ -17,7 +17,7 @@ y_test = to_categorical(y_test)
 
 # 입력 이미지 형상 재조정 및 정규화
 image_size = x_train.shape[1]
-x_train - np.reshape(x_train, [-1, image_size, image_size, 1])
+x_train = np.reshape(x_train, [-1, image_size, image_size, 1])
 x_train = x_train.astype('float32') / 255
 x_test = np.reshape(x_test, [-1, image_size, image_size, 1])
 x_test = x_test.astype('float32') / 255
