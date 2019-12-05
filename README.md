@@ -744,3 +744,25 @@ LSTM을 제대로 활용하기 위해서 **상태유지 모드**, **배치사이
 ##### 기본 개념
 - 계층은 텐서를 인수로 받는 인스턴스다. 한 계층의 출력은 또 다른 텐서다. 모델을 구성하는 계층 인스턴스는 입력과 출력 텐서를 통해 서로 연결되는 객체다. 이렇게 하면 순차형 모델에서 여러 계층을 쌓아 올리는 것과 비슷한 최종 결과를 얻게 된다. 그리허지만 계층 인스턴스를 사용하면 각 계층의 입출력에 손쉽게 접근할 수 있기 때문에 모델이 보조 입출력 혹은 여러 입출력을 갖기 쉽다.
 - 모델은 하나 이상의 입력 텐서와 출력 텐서 사이의 함수다. 모델 입출력 사이에서 텐서는 계층의 입출력 텐서로 서로 연결될 계층 인스턴스다. 그러므로 모델은 하나 이상의 입력 꼐층과 하나 이상의 출력 계층의 함수다. 모델 인스턴스는 입력에서 출력으로 데이터가 흐르는 방법을 계산 그래프로 구성한다.
+
+##### 활용 예
+```python
+from keras.layers import Input, MaxPooling2D, Flatten, Dense, Dropout, Conv2D
+
+# 초기 입력 정의 : Input을 이용하여 입력값을 텐서로 생성. Input(input_shape)
+inputs = Input(shape=input_shape)
+
+# 각 계층을 정의 : 출력 = FunctionAPI(속성)(입력)
+y = Conv2D(filters=filters,
+           kernel_size=kernel_size,
+           activation='relu')(inputs)
+y = MaxPooling2D()(y)
+y = Flatten()(y)
+y = Dropout(dropout)(y)
+
+# 출력 정의
+outputs = Dense(num_labels, activation='softmax')(y)
+
+# 모델정의
+model = Model(inputs=inputs, outputs=outputs)
+```
