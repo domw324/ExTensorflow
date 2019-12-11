@@ -55,7 +55,7 @@ n = 3
 # model version
 # orig paper: version = 1 (ResNet v1),
 # improved ResNet: version = 2 (ResNet v2)
-version = 1 # NOTE : version = 2 로 변경 시 ResNet v2 실행시킬 수 있다.
+version = 2 # NOTE : version = 2 로 변경 시 ResNet v2 실행시킬 수 있다.
 
 # computed depth from supplied model parameter n
 if version == 1:
