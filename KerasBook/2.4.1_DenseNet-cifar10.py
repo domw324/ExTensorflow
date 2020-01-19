@@ -90,8 +90,8 @@ def lr_schedule(epoch):
     return lr
 
 
-# start model definition
-# densenet CNNs (composite function) are made of BN-ReLU-Conv2D
+# 모델 정의 시작
+# densenet CNNs (함성 함수)는 BN-ReLU-Conv2D로 구성
 inputs = Input(shape=input_shape)
 x = BatchNormalization()(inputs)
 x = Activation('relu')(x)
@@ -101,9 +101,9 @@ x = Conv2D(num_filters_bef_dense_block,
            kernel_initializer='he_normal')(x)
 x = concatenate([inputs, x])
 
-# stack of dense blocks bridged by transition layers
+# 전이층으로 연결된 밀집 블록 스택
 for i in range(num_dense_blocks):
-    # a dense block is a stack of bottleneck layers
+    # 밀집 블록은 병목 계층의 스택임
     for j in range(num_bottleneck_layers):
         y = BatchNormalization()(x)
         y = Activation('relu')(y)
@@ -123,11 +123,11 @@ for i in range(num_dense_blocks):
             y = Dropout(0.2)(y)
         x = concatenate([x, y])
 
-    # no transition layer after the last dense block
+    # 마지막 밀집 블록 다음에는 전이 계층 없음
     if i == num_dense_blocks - 1:
         continue
 
-    # transition layer compresses num of feature maps and reduces the size by 2
+    # 전이 계층에서 특징 맵 개수를 압축. 1/2로 축소
     num_filters_bef_dense_block += num_bottleneck_layers * growth_rate
     num_filters_bef_dense_block = int(num_filters_bef_dense_block * compression_factor)
     y = BatchNormalization()(x)
@@ -140,16 +140,14 @@ for i in range(num_dense_blocks):
     x = AveragePooling2D()(y)
 
 
-# add classifier on top
-# after average pooling, size of feature map is 1 x 1
+# Average Pooling 다음으로 상단에 분류 모델 추가. 특징 맵의 크기는 1*1
 x = AveragePooling2D(pool_size=8)(x)
 y = Flatten()(x)
 outputs = Dense(num_classes,
                 kernel_initializer='he_normal',
                 activation='softmax')(y)
 
-# instantiate and compile model
-# orig paper uses SGD but RMSprop works better for DenseNet
+# 모델 인스턴스화 & 컴파일 (최초 논문에서는 SGD를 사용했지만 DenseNet에서 RMSprop가 더 성능이 좋음.)
 model = Model(inputs=inputs, outputs=outputs)
 model.compile(loss='categorical_crossentropy',
               optimizer=RMSprop(1e-3),
